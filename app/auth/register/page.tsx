@@ -1,53 +1,68 @@
 "use client";
-import { Button, Form, Input, Link } from "@heroui/react";
+import { Button, Form, Link } from "@heroui/react";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
 import { ImGithub } from "react-icons/im";
 
+import FormField from "@/components/form-filed";
+import { RegisterFormData, RegisterSchema } from "@/types/auth";
+
 export default function Register() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<RegisterFormData>({
+    resolver: zodResolver(RegisterSchema),
+  });
+
+  const onSubmit: SubmitHandler<RegisterFormData> = (
+    data: RegisterFormData
+  ) => {
+    console.log("Form submitted:", data);
+  };
+
   return (
     <div className="w-full flex justify-center">
       <div className="w-80">
         <div className="mb-6 text-2xl">Register</div>
         <Form
           className="w-full max-w-xs flex flex-col gap-3"
-          onReset={() => {}}
-          onSubmit={(e) => {
-            e.preventDefault();
-          }}
+          onSubmit={handleSubmit(onSubmit)}
         >
-          <Input
-            isRequired
+          <FormField
             className="mb-2"
-            errorMessage="Please enter a valid username"
+            error={errors.username}
             label="Username"
             labelPlacement="outside"
             name="username"
-            type="text"
+            register={register}
           />
-          <Input
-            isRequired
+          <FormField
             className="mb-2"
-            errorMessage="Please enter a valid email"
+            error={errors.email}
             label="Email"
             labelPlacement="outside"
             name="email"
-            type="email"
+            register={register}
           />
-          <Input
-            isRequired
+          <FormField
             className="mb-2"
-            errorMessage="Please enter a valid email"
+            error={errors.password}
             label="Password"
             labelPlacement="outside"
             name="password"
+            register={register}
             type="password"
           />
-          <Input
-            isRequired
-            errorMessage="Please enter a valid email"
+          <FormField
+            className="mb-2"
+            error={errors.password_confirmation}
             label="Password confirm"
             labelPlacement="outside"
             name="password_confirmation"
+            register={register}
             type="password"
           />
 

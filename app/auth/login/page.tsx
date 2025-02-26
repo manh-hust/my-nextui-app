@@ -1,31 +1,23 @@
 "use client";
-import { Button, Form, Input, Link } from "@heroui/react";
+import { Button, Form, Link } from "@heroui/react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import { FcGoogle } from "react-icons/fc";
 import { ImGithub } from "react-icons/im";
-import { z } from "zod";
 
-const schema = z.object({
-  email: z.string().email("Invalid email format"),
-  password: z
-    .string()
-    .min(8, "Password is too short. It must be at least 8 characters.")
-    .regex(/[a-z]/, "Password must contain at least one lowercase letter.")
-    .regex(/[A-Z]/, "Password must contain at least one uppercase letter.")
-    .regex(/\d/, "Password must contain at least one number."),
-});
+import FormField from "@/components/form-filed";
+import { LoginFormData, LoginSchema } from "@/types/auth";
 
 export default function Login() {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({
-    resolver: zodResolver(schema),
+  } = useForm<LoginFormData>({
+    resolver: zodResolver(LoginSchema),
   });
 
-  const onSubmit = (data: any) => {
+  const onSubmit: SubmitHandler<LoginFormData> = (data: LoginFormData) => {
     console.log("Form submitted:", data);
   };
 
@@ -37,20 +29,22 @@ export default function Login() {
           className="w-full max-w-xs flex flex-col gap-1"
           onSubmit={handleSubmit(onSubmit)}
         >
-          <Input
+          <FormField
             className="mb-4"
+            error={errors.email}
             label="Email"
-            {...register("email")}
-            isRequired
-            errorMessage={errors.email?.message}
+            labelPlacement="outside"
+            name="email"
+            register={register}
+            type="text"
           />
-
-          <Input
+          <FormField
+            error={errors.password}
             label="Password"
+            labelPlacement="outside"
+            name="password"
+            register={register}
             type="password"
-            {...register("password")}
-            isRequired
-            errorMessage={errors.password?.message}
           />
 
           <Button className="w-full mt-4" color="primary" type="submit">
